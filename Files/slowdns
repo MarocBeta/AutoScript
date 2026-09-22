@@ -1,0 +1,114 @@
+#!/bin/bash
+
+rm -rf /root/slowdns >/dev/null 2>&1
+
+clear
+MYIP=$(curl -sS ipv4.icanhazip.com)
+data_server=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Date | sed -e 's/< Date: //')
+
+date_list=$(date +"%Y-%m-%d" -d "$data_server")
+data_ip="https://raw.githubusercontent.com/MarocBeta/Permission/main/access"
+
+clear
+checking_sc() {
+useexp=$(wget -qO- $data_ip | grep $MYIP | awk '{print $3}')
+if [[ $date_list < $useexp ]]; then
+echo -ne
+else
+echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+echo -e "\033[42m          404 NOT FOUND AUTOSCRIPT          \033[0m"
+echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+echo -e ""
+echo -e "            \033[91;1mPERMISSION DENIED !\033[0m"
+echo -e "   \033[0;33mYour VPS\033[0m $MYIP \033[0;33mHas been Banned\033[0m"
+echo -e "     \033[0;33mBuy access permissions for scripts\033[0m"
+echo -e "             \033[0;33mContact Admin :\033[0m"
+echo -e "      \033[2;32mWhatsApp:\033[0m wa.me/6285225416745"
+echo -e "      \033[2;32mTelegram:\033[0m t.me/RidwanzSaputra"
+echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+exit 0
+fi
+}
+
+checking_sc
+
+YELLOW='\033[0;33m'
+NC='\e[0m'
+
+REPO="https://raw.githubusercontent.com/KbmnGlntr/SlowDns/main"
+
+ns_domain_cloudflare() {
+    DOMAIN="rsvpns.my.id"
+    DOMAIN_PATH=$(cat /etc/xray/domain)
+    SUB=$(tr </dev/urandom -dc a-z0-9 | head -c7)
+    SUB_DOMAIN="${SUB}.rsvpns.my.id"
+    NS_DOMAIN="dns.${SUB_DOMAIN}"
+    CF_ID="ridwanzsptra@gmail.com"
+    CF_KEY="aef414496ab441335e845b1960ad3c22e2c0e"
+    IP=$(wget -qO- ipinfo.io/ip)
+    
+    echo -e "${YELLOW}Updating DNS NS For:${NC} ${NS_DOMAIN}..."
+    ZONE=$(
+        curl -sLX GET "https://api.cloudflare.com/client/v4/zones?name=${DOMAIN}&status=active" \
+        -H "X-Auth-Email: ${CF_ID}" \
+        -H "X-Auth-Key: ${CF_KEY}" \
+        -H "Content-Type: application/json" | jq -r .result[0].id
+    )
+
+    RECORD=$(
+        curl -sLX GET "https://api.cloudflare.com/client/v4/zones/${ZONE}/dns_records?name=${NS_DOMAIN}" \
+        -H "X-Auth-Email: ${CF_ID}" \
+        -H "X-Auth-Key: ${CF_KEY}" \
+        -H "Content-Type: application/json" | jq -r .result[0].id
+    )
+
+    if [ "${#RECORD}" -le 10 ]; then
+        RECORD=$(
+            curl -sLX POST "https://api.cloudflare.com/client/v4/zones/${ZONE}/dns_records" \
+            -H "X-Auth-Email: ${CF_ID}" \
+            -H "X-Auth-Key: ${CF_KEY}" \
+            -H "Content-Type: application/json" \
+            --data '{"type":"NS","name":"'${NS_DOMAIN}'","content":"'${DOMAIN_PATH}'","proxied":false}' | jq -r .result.id
+        )
+    fi
+
+    RESULT=$(
+        curl -sLX PUT "https://api.cloudflare.com/client/v4/zones/${ZONE}/dns_records/${RECORD}" \
+        -H "X-Auth-Email: ${CF_ID}" \
+        -H "X-Auth-Key: ${CF_KEY}" \
+        -H "Content-Type: application/json" \
+        --data '{"type":"NS","name":"'${NS_DOMAIN}'","content":"'${DOMAIN_PATH}'","proxied":false}'
+    )
+    echo "$NS_DOMAIN" >/etc/xray/dns
+}
+
+setup_dnstt() {
+    cd
+    mkdir -p /etc/slowdns
+    wget -O dnstt-server "${REPO}/dnstt-server" >/dev/null 2>&1
+    chmod +x dnstt-server >/dev/null 2>&1
+    wget -O dnstt-client "${REPO}/dnstt-client" >/dev/null 2>&1
+    chmod +x dnstt-client >/dev/null 2>&1
+    ./dnstt-server -gen-key -privkey-file server.key -pubkey-file server.pub
+    mv dnstt-client /etc/slowdns
+    mv dnstt-server /etc/slowdns
+    mv server.key /etc/slowdns
+    mv server.pub /etc/slowdns
+    wget -O /etc/systemd/system/client.service "${REPO}/client.service" >/dev/null 2>&1
+    wget -O /etc/systemd/system/server.service "${REPO}/server.service" >/dev/null 2>&1
+    sed -i "s/xxxx/$NS_DOMAIN/g" /etc/systemd/system/client.service
+    sed -i "s/xxxx/$NS_DOMAIN/g" /etc/systemd/system/server.service
+}
+
+ns_domain_cloudflare
+setup_dnstt
+
+systemctl daemon-reload
+
+systemctl start client
+systemctl enable client
+systemctl restart client
+
+systemctl start server
+systemctl enable server
+systemctl restart server
