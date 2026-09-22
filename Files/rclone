@@ -1,0 +1,48 @@
+#!/bin/bash
+
+rm -rf /root/rclone >/dev/null 2>&1
+
+clear
+MYIP=$(curl -sS ipv4.icanhazip.com)
+data_server=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Date | sed -e 's/< Date: //')
+
+date_list=$(date +"%Y-%m-%d" -d "$data_server")
+data_ip="https://raw.githubusercontent.com/farkhanihamza/Permission/main/access"
+
+clear
+checking_sc() {
+useexp=$(wget -qO- $data_ip | grep $MYIP | awk '{print $3}')
+if [[ $date_list < $useexp ]]; then
+echo -ne
+else
+echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+echo -e "\033[42m          404 NOT FOUND AUTOSCRIPT          \033[0m"
+echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+echo -e ""
+echo -e "            \033[91;1mPERMISSION DENIED !\033[0m"
+echo -e "   \033[0;33mYour VPS\033[0m $MYIP \033[0;33mHas been Banned\033[0m"
+echo -e "     \033[0;33mBuy access permissions for scripts\033[0m"
+echo -e "             \033[0;33mContact Admin :\033[0m"
+echo -e "      \033[2;32mWhatsApp:\033[0m wa.me/6285225416745"
+echo -e "      \033[2;32mTelegram:\033[0m t.me/RidwanzSaputra"
+echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+exit 0
+fi
+}
+
+checking_sc
+
+CONFIG_DIR="/root/.config/rclone"
+CONFIG_FILE="$CONFIG_DIR/rclone.conf"
+
+mkdir -p "$CONFIG_DIR"
+
+cat <<EOF > "$CONFIG_FILE"
+[dr]
+type = drive
+scope = drive
+token = {"access_token":"ya29.a0AXeO80RTGkgYCAvZoPxNS9JHKrb6yd3eLRymBDDPRa8paXqJF7-MLPGLzghK7P0qI8BSyYNnzXT9Vxd_XClw3IIo-p8AyH0Tx7qBgjcpbDdu2rLtIux7HY6GxQiofL6JHTMTDc8MjFYrzOCmL8DP71eQtReUoNTE-NKsyUlraCgYKAeoSARISFQHGX2MiZW0dKqNjovjVLelobsuKEA0175","token_type":"Bearer","refresh_token":"1//0gRnwZD_7-CDECgYIARAAGBASNwF-L9IrhqgzeCGtw-mG2RRHvxpaxk0lM6iUFOxX3PeR8a-eDFOwZW-vFkimzrrAt9WZMynap-Y","expiry":"2025-02-13T22:21:06.430919668Z"}
+EOF
+
+chmod 600 "$CONFIG_FILE"
+sleep 3
