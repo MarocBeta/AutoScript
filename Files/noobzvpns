@@ -1,0 +1,116 @@
+#!/bin/bash
+
+rm -rf /root/noobzvpns >/dev/null 2>&1
+
+clear
+MYIP=$(curl -sS ipv4.icanhazip.com)
+data_server=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Date | sed -e 's/< Date: //')
+
+date_list=$(date +"%Y-%m-%d" -d "$data_server")
+data_ip="https://raw.githubusercontent.com/MarocBeta/Permission/main/access"
+
+clear
+checking_sc() {
+useexp=$(wget -qO- $data_ip | grep $MYIP | awk '{print $3}')
+if [[ $date_list < $useexp ]]; then
+echo -ne
+else
+echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+echo -e "\033[42m          404 NOT FOUND AUTOSCRIPT          \033[0m"
+echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+echo -e ""
+echo -e "            \033[91;1mPERMISSION DENIED !\033[0m"
+echo -e "   \033[0;33mYour VPS\033[0m $MYIP \033[0;33mHas been Banned\033[0m"
+echo -e "     \033[0;33mBuy access permissions for scripts\033[0m"
+echo -e "             \033[0;33mContact Admin :\033[0m"
+echo -e "      \033[2;32mWhatsApp:\033[0m wa.me/6285225416745"
+echo -e "      \033[2;32mTelegram:\033[0m t.me/RidwanzSaputra"
+echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+exit 0
+fi
+}
+
+checking_sc
+
+BIN=/usr/bin
+CONFIGS=/etc/noobzvpns
+SYSTEMD=/etc/systemd/system
+SYSTEMCTL=$(which systemctl)
+REPOSITORY="https://raw.githubusercontent.com/KbmnGlntr/NoobzVpns/main"
+MACHINE=$(uname -m)
+BINARY_ARCH=""
+
+if [ "$(id -u)" != "0" ]; then
+    echo "Error at installation, please run installer as root"
+    exit 1
+fi
+
+case $MACHINE in
+    "x86_64")
+        BINARY_ARCH="noobzvpns.x86_64"
+        ;;
+    *)
+        echo "Error at installation, unsupported cpu-arch $MACHINE"
+        exit 1
+        ;;
+esac
+
+echo "CPU-Arch: $MACHINE, Binary: $BINARY_ARCH"
+
+if [ ! -d "$SYSTEMD" ]; then
+    echo "Error at installation, no systemd directory found. Make sure your distro uses systemd as the default init system."
+    exit 1
+fi
+
+if [ ! -f "$SYSTEMCTL" ]; then
+    echo "Error at installation, no systemctl binary found. Make sure your distro uses systemd as the default init system."
+    exit 1
+fi
+
+echo "Preparing Upgrade/Install..."
+if [ -f "$SYSTEMD/noobzvpns.service" ]; then
+
+    $SYSTEMCTL daemon-reload
+    $SYSTEMCTL stop noobzvpns.service
+    $SYSTEMCTL disable noobzvpns.service
+    rm -rf "$SYSTEMD/noobzvpns.service"
+fi
+
+if [ -f "$BIN/noobzvpns" ]; then
+    rm -rf "$BIN/noobzvpns"
+fi
+if [ -f "$CONFIGS/cert.pem" ]; then
+    rm -rf "$CONFIGS/cert.pem"
+fi
+if [ -f "$CONFIGS/key.pem" ]; then
+    rm -rf "$CONFIGS/key.pem"
+fi
+
+echo "Downloading Binary Files..."
+if [ ! -d "$CONFIGS" ]; then
+    mkdir "$CONFIGS"
+fi
+
+wget -q "$REPOSITORY/$BINARY_ARCH" -O "$BIN/noobzvpns"
+wget -q "$REPOSITORY/cert.pem" -O "$CONFIGS/cert.pem"
+wget -q "$REPOSITORY/key.pem" -O "$CONFIGS/key.pem"
+wget -q "$REPOSITORY/noobzvpns.service" -O "$SYSTEMD/noobzvpns.service"
+
+if [ ! -f "$CONFIGS/config.json" ]; then
+wget -q "$REPOSITORY/config.json" -O "$CONFIGS/config.json"
+fi
+
+echo "Setting Files Permissions..."
+chmod 700 "$BIN/noobzvpns"
+chmod 600 "$CONFIGS/cert.pem"
+chmod 600 "$CONFIGS/config.json"
+chmod 600 "$CONFIGS/key.pem"
+chmod 600 "$SYSTEMD/noobzvpns.service"
+
+echo "Finishing Upgrade/Install..."
+$SYSTEMCTL daemon-reload
+$SYSTEMCTL start noobzvpns.service
+$SYSTEMCTL enable noobzvpns.service
+$SYSTEMCTL restart noobzvpns.service
+
+echo "Noobzvpns Installed Successfully!"
