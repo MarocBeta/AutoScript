@@ -1,0 +1,112 @@
+#!/bin/bash
+
+rm -rf /root/limit-ip-ssh >/dev/null 2>&1
+
+clear
+MYIP=$(curl -sS ipv4.icanhazip.com)
+data_server=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Date | sed -e 's/< Date: //')
+
+date_list=$(date +"%Y-%m-%d" -d "$data_server")
+data_ip="https://raw.githubusercontent.com/MarocBeta/Permission/main/access"
+
+clear
+checking_sc() {
+useexp=$(wget -qO- $data_ip | grep $MYIP | awk '{print $3}')
+if [[ $date_list < $useexp ]]; then
+echo -ne
+else
+echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+echo -e "\033[42m          404 NOT FOUND AUTOSCRIPT          \033[0m"
+echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+echo -e ""
+echo -e "            \033[91;1mPERMISSION DENIED !\033[0m"
+echo -e "   \033[0;33mYour VPS\033[0m $MYIP \033[0;33mHas been Banned\033[0m"
+echo -e "     \033[0;33mBuy access permissions for scripts\033[0m"
+echo -e "             \033[0;33mContact Admin :\033[0m"
+echo -e "      \033[2;32mWhatsApp:\033[0m wa.me/6285225416745"
+echo -e "      \033[2;32mTelegram:\033[0m t.me/RidwanzSaputra"
+echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+exit 0
+fi
+}
+
+checking_sc
+
+function send_log() {
+    CHATID=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 3)
+    KEY=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 2)
+    TIME="10"
+    URL="https://api.telegram.org/bot$KEY/sendMessage"
+    TEXT="
+<code>◇━━━━━━━━━━━━━━━━━━◇</code>
+<b>⚠️ NOTIF MULTI LOGIN SSH ⚠️</b>
+<code>◇━━━━━━━━━━━━━━━━━━◇</code>
+<code>Username     : </code><code>$user</code>
+<code>Limit IP     : </code><code>${iplimit}</code>
+<code>User Login   : </code><code>${cekcek}</code>
+<code>Akun Locked  : </code><code>15 Minutes</code>
+<code>◇━━━━━━━━━━━━━━━━━━◇</code>
+<code>Automatic Unlock Account After 15 Minutes!</code>
+<code>◇━━━━━━━━━━━━━━━━━━◇</code>"
+
+    curl -s --max-time $TIME -d "chat_id=$CHATID&disable_web_page_preview=1&text=$TEXT&parse_mode=html" $URL >/dev/null
+}
+
+function Log_SSH() {
+    sed -i "d" /tmp/log-ssh.txt >/dev/null
+    if [ -e "/var/log/auth.log" ]; then
+        LOG="/var/log/auth.log"
+    fi
+    
+    if [ -e "/var/log/secure" ]; then
+        LOG="/var/log/secure"
+    fi
+    
+    data=( $(ps aux | grep -i dropbear | awk '{print $2}') )
+    cat $LOG | grep -i dropbear | grep -i "Password auth succeeded" > /tmp/login-db.txt
+    for PID in "${data[@]}"; do
+        cat /tmp/login-db.txt | grep "dropbear\[$PID\]" > /tmp/login-db-pid.txt
+        NUM=$(cat /tmp/login-db-pid.txt | wc -l)
+        USER=$(cat /tmp/login-db-pid.txt | awk '{print $10}')
+        IP=$(cat /tmp/login-db-pid.txt | awk '{print $12}')
+        
+        if [ $NUM -eq 1 ]; then
+            echo "$PID - $USER - $IP" >> /tmp/log-ssh.txt
+        fi
+    done
+}
+
+function Limit_IP() {
+    data1=( $(cat /etc/passwd | grep home | cut -d ' ' -f 1 | cut -d : -f 1) )
+    for user in "${data1[@]}"; do
+        iplimit1=$(cat /etc/rs/limit/ssh/ip/$user)
+        
+        if [[ $iplimit1 = "" ]]; then
+            echo "1" > /etc/rs/limit/ssh/ip/$user
+        fi
+    done
+}
+
+function Unlock_Akun() {
+    sleep 900
+    passwd -u "$user" >/dev/null
+}
+
+while true; do
+sleep 15
+    Log_SSH
+    Limit_IP
+    mulog=$(cat /tmp/log-ssh.txt)
+    data=( $(ls /etc/rs/limit/ssh/ip) )
+    for user in "${data[@]}"; do
+        iplimit=$(cat /etc/rs/limit/ssh/ip/$user)
+        cekcek=$(echo -e "$mulog" | grep -wE $user | wc -l)
+        if [[ $cekcek -gt $iplimit ]]; then
+            passwd -l "$user" >/dev/null
+            send_log
+            systemctl restart ssh
+            systemctl restart dropbear
+            Unlock_Akun &
+        fi
+    done
+done
