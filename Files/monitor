@@ -1,0 +1,90 @@
+#!/bin/bash
+
+rm -rf /root/monitor >/dev/null 2>&1
+
+clear
+MYIP=$(curl -sS ipv4.icanhazip.com)
+data_server=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Date | sed -e 's/< Date: //')
+
+date_list=$(date +"%Y-%m-%d" -d "$data_server")
+data_ip="https://raw.githubusercontent.com/MarocBeta/Permission/main/access"
+
+clear
+checking_sc() {
+useexp=$(wget -qO- $data_ip | grep $MYIP | awk '{print $3}')
+if [[ $date_list < $useexp ]]; then
+echo -ne
+else
+echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+echo -e "\033[42m          404 NOT FOUND AUTOSCRIPT          \033[0m"
+echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+echo -e ""
+echo -e "            \033[91;1mPERMISSION DENIED !\033[0m"
+echo -e "   \033[0;33mYour VPS\033[0m $MYIP \033[0;33mHas been Banned\033[0m"
+echo -e "     \033[0;33mBuy access permissions for scripts\033[0m"
+echo -e "             \033[0;33mContact Admin :\033[0m"
+echo -e "      \033[2;32mWhatsApp:\033[0m wa.me/6285225416745"
+echo -e "      \033[2;32mTelegram:\033[0m t.me/RidwanzSaputra"
+echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+exit 0
+fi
+}
+
+checking_sc
+
+THRESHOLD=80
+RAM_MONITOR="/usr/local/bin/ram_monitor"
+SERVICE="/etc/systemd/system/ram_monitor.service"
+
+cat > "$RAM_MONITOR" << EOF
+#!/bin/bash
+
+GREEN='\033[0;32m'
+RED='\033[31m'
+NC='\033[0m'
+
+THRESHOLD=$THRESHOLD
+
+get_ram_usage() {
+    free | awk '/Mem:/ {printf "%.0f", \$3/\$2 * 100}'
+}
+
+get_ram_details() {
+    free -m | awk '/Mem:/ {print \$3 " MB of " \$2 " MB"}'
+}
+
+while true; do
+    RAM_USAGE=\$(get_ram_usage)
+    RAM_DETAILS=\$(get_ram_details)
+    if (( RAM_USAGE >= THRESHOLD )); then
+        echo -e "\${RED}RAM usage has reached \${RAM_USAGE}% (\${RAM_DETAILS}).\nThe system will reboot automatically...\${NC}"
+        sudo reboot
+    else
+        echo -e "\${GREEN}Current RAM usage: \${RAM_USAGE}% (\${RAM_DETAILS}).\nThe system is within normal limits.\${NC}"
+    fi
+    sleep 60
+done
+EOF
+
+chmod +x "$RAM_MONITOR"
+
+cat > "$SERVICE" << EOF
+[Unit]
+Description=RAM Usage Monitor (80% Threshold)
+After=network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=$RAM_MONITOR
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl start ram_monitor
+systemctl enable ram_monitor
+systemctl restart ram_monitor
+sleep 3
