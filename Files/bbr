@@ -1,0 +1,122 @@
+#!/bin/bash
+
+rm -rf /root/bbr >/dev/null 2>&1
+
+clear
+MYIP=$(curl -sS ipv4.icanhazip.com)
+data_server=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Date | sed -e 's/< Date: //')
+
+date_list=$(date +"%Y-%m-%d" -d "$data_server")
+data_ip="https://raw.githubusercontent.com/MarocBeta/Permission/main/access"
+
+clear
+checking_sc() {
+useexp=$(wget -qO- $data_ip | grep $MYIP | awk '{print $3}')
+if [[ $date_list < $useexp ]]; then
+echo -ne
+else
+echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+echo -e "\033[42m          404 NOT FOUND AUTOSCRIPT          \033[0m"
+echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+echo -e ""
+echo -e "            \033[91;1mPERMISSION DENIED !\033[0m"
+echo -e "   \033[0;33mYour VPS\033[0m $MYIP \033[0;33mHas been Banned\033[0m"
+echo -e "     \033[0;33mBuy access permissions for scripts\033[0m"
+echo -e "             \033[0;33mContact Admin :\033[0m"
+echo -e "      \033[2;32mWhatsApp:\033[0m wa.me/6285225416745"
+echo -e "      \033[2;32mTelegram:\033[0m t.me/RidwanzSaputra"
+echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+exit 0
+fi
+}
+
+checking_sc
+
+Add_To_New_Line(){
+    if [ "$(tail -n1 $1 | wc -l)" == "0" ]; then
+        echo "" >> "$1"
+    fi
+    echo "$2" >> "$1"
+}
+
+Check_And_Add_Line(){
+    if [ -z "$(cat "$1" | grep "$2")" ]; then
+        Add_To_New_Line "$1" "$2"
+    fi
+}
+
+Install_BBR(){
+    if [ -z "$(lsmod | grep bbr)" ]; then
+        modprobe tcp_bbr
+        Add_To_New_Line "/etc/modules-load.d/modules.conf" "tcp_bbr"
+        Add_To_New_Line "/etc/sysctl.conf" "net.core.default_qdisc = fq"
+        Add_To_New_Line "/etc/sysctl.conf" "net.ipv4.tcp_congestion_control = bbr"
+        sysctl -p
+    fi
+}
+
+Disable_IPv6() {
+    Add_To_New_Line "/etc/sysctl.conf" "net.ipv6.conf.all.disable_ipv6 = 1"
+    Add_To_New_Line "/etc/sysctl.conf" "net.ipv6.conf.default.disable_ipv6 = 1"
+    Add_To_New_Line "/etc/sysctl.conf" "net.ipv6.conf.lo.disable_ipv6 = 1"
+}
+
+Enable_IPv4_Forwarding() {
+    Add_To_New_Line "/etc/sysctl.conf" "net.ipv4.ip_forward = 1"
+    Add_To_New_Line "/etc/sysctl.conf" "net.ipv4.conf.all.forwarding = 1"
+}
+
+Optimize_Parameters() {
+    modprobe ip_conntrack
+    Add_To_New_Line "/etc/security/limits.conf" "* soft nofile 65535"
+    Add_To_New_Line "/etc/security/limits.conf" "* hard nofile 65535"
+    Add_To_New_Line "/etc/security/limits.conf" "root soft nofile 1048576"
+    Add_To_New_Line "/etc/security/limits.conf" "root hard nofile 1048576"
+    
+    Add_To_New_Line "/etc/sysctl.conf" "net.ipv4.tcp_rmem = 4096 87380 67108864"
+    Add_To_New_Line "/etc/sysctl.conf" "net.ipv4.tcp_wmem = 4096 65536 67108864"
+    Add_To_New_Line "/etc/sysctl.conf" "net.ipv4.udp_rmem_min = 8192"
+    Add_To_New_Line "/etc/sysctl.conf" "net.ipv4.udp_wmem_min = 8192"
+    Add_To_New_Line "/etc/sysctl.conf" "vm.swappiness = 10"
+    Add_To_New_Line "/etc/sysctl.conf" "vm.overcommit_memory = 1"
+    Add_To_New_Line "/etc/sysctl.conf" "net.core.somaxconn = 65535"
+    Add_To_New_Line "/etc/sysctl.conf" "net.core.netdev_max_backlog = 5000"
+    Add_To_New_Line "/etc/sysctl.conf" "net.ipv4.tcp_max_syn_backlog = 8192"
+    Add_To_New_Line "/etc/sysctl.conf" "net.ipv4.tcp_syncookies = 1"
+    Add_To_New_Line "/etc/sysctl.conf" "net.ipv4.tcp_tw_reuse = 1"
+    Add_To_New_Line "/etc/sysctl.conf" "net.ipv4.tcp_fastopen = 3"
+    Add_To_New_Line "/etc/sysctl.conf" "net.ipv4.tcp_ecn = 1"
+    Add_To_New_Line "/etc/sysctl.conf" "net.ipv4.tcp_fin_timeout = 30"
+    Add_To_New_Line "/etc/sysctl.conf" "net.ipv4.tcp_keepalive_time = 1200"
+    Add_To_New_Line "/etc/sysctl.conf" "net.ipv4.tcp_keepalive_intvl = 30"
+    Add_To_New_Line "/etc/sysctl.conf" "net.ipv4.tcp_keepalive_probes = 6"
+    Add_To_New_Line "/etc/sysctl.conf" "net.ipv4.tcp_max_tw_buckets = 2000000"
+    Add_To_New_Line "/etc/sysctl.conf" "fs.file-max = 2097152"
+    Add_To_New_Line "/etc/sysctl.conf" "fs.inotify.max_user_watches = 524288"
+    Add_To_New_Line "/etc/sysctl.conf" "kernel.pid_max = 4194303"
+    Add_To_New_Line "/etc/sysctl.conf" "net.core.rmem_default = 262144"
+    Add_To_New_Line "/etc/sysctl.conf" "net.core.wmem_default = 262144"
+    Add_To_New_Line "/etc/sysctl.conf" "net.core.rmem_max = 67108864"
+    Add_To_New_Line "/etc/sysctl.conf" "net.core.wmem_max = 67108864"
+    Add_To_New_Line "/etc/sysctl.conf" "net.core.optmem_max = 25165824"
+    Add_To_New_Line "/etc/sysctl.conf" "net.ipv4.tcp_mtu_probing = 1"
+    Add_To_New_Line "/etc/sysctl.conf" "net.ipv4.conf.all.rp_filter = 1"
+    Add_To_New_Line "/etc/sysctl.conf" "net.ipv4.conf.default.rp_filter = 1"
+    Add_To_New_Line "/etc/sysctl.conf" "net.ipv4.conf.all.accept_source_route = 0"
+    Add_To_New_Line "/etc/sysctl.conf" "net.ipv4.conf.all.accept_redirects = 0"
+    Add_To_New_Line "/etc/sysctl.conf" "net.ipv4.conf.all.secure_redirects = 0"
+    Add_To_New_Line "/etc/sysctl.conf" "net.ipv4.icmp_echo_ignore_broadcasts = 1"
+    Add_To_New_Line "/etc/sysctl.conf" "net.ipv4.icmp_ignore_bogus_error_responses = 1"
+}
+
+Apply_Settings() {
+    sysctl -p
+    ulimit -n 1048576
+}
+
+Install_BBR
+Disable_IPv6
+Enable_IPv4_Forwarding
+Optimize_Parameters
+Apply_Settings
+sleep 3
