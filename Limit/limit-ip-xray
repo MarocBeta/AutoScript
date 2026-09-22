@@ -1,0 +1,237 @@
+#!/bin/bash
+
+rm -rf /root/limit-ip-xray >/dev/null 2>&1
+
+clear
+MYIP=$(curl -sS ipv4.icanhazip.com)
+data_server=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Date | sed -e 's/< Date: //')
+
+date_list=$(date +"%Y-%m-%d" -d "$data_server")
+data_ip="https://raw.githubusercontent.com/MarocBeta/Permission/main/access"
+
+clear
+checking_sc() {
+useexp=$(wget -qO- $data_ip | grep $MYIP | awk '{print $3}')
+if [[ $date_list < $useexp ]]; then
+echo -ne
+else
+echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+echo -e "\033[42m          404 NOT FOUND AUTOSCRIPT          \033[0m"
+echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+echo -e ""
+echo -e "            \033[91;1mPERMISSION DENIED !\033[0m"
+echo -e "   \033[0;33mYour VPS\033[0m $MYIP \033[0;33mHas been Banned\033[0m"
+echo -e "     \033[0;33mBuy access permissions for scripts\033[0m"
+echo -e "             \033[0;33mContact Admin :\033[0m"
+echo -e "      \033[2;32mWhatsApp:\033[0m wa.me/6285225416745"
+echo -e "      \033[2;32mTelegram:\033[0m t.me/RidwanzSaputra"
+echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+exit 0
+fi
+}
+
+checking_sc
+
+function send_log_vmess(){
+    CHATID=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 3)
+    KEY=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 2)
+    TIME="10"
+    URL="https://api.telegram.org/bot$KEY/sendMessage"
+    TEXT="
+<code>◇━━━━━━━━━━━━━━━━━━◇</code>
+<b>⚠️ NOTIF MULTI LOGIN XRAY VMESS ⚠️</b>
+<code>◇━━━━━━━━━━━━━━━━━━◇</code>
+<code>Username  : </code><code>$user</code>
+<code>Limit IP    : </code><code>$iplimit</code>
+<code>Login IP    : </code><code>$cekcek</code>
+<code>◇━━━━━━━━━━━━━━━━━━◇</code>
+<code>Automatic Unlock Account After 15 Minutes!</code>
+<code>◇━━━━━━━━━━━━━━━━━━◇</code>
+"
+    curl -s --max-time $TIME -d "chat_id=$CHATID&disable_web_page_preview=1&text=$TEXT&parse_mode=html" $URL >/dev/null
+}
+
+function send_log_vless(){
+    CHATID=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 3)
+    KEY=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 2)
+    TIME="10"
+    URL="https://api.telegram.org/bot$KEY/sendMessage"
+    TEXT="
+<code>◇━━━━━━━━━━━━━━━━━━◇</code>
+<b>⚠️ NOTIF MULTI LOGIN XRAY VLESS ⚠️</b>
+<code>◇━━━━━━━━━━━━━━━━━━◇</code>
+<code>Username  : </code><code>$user</code>
+<code>Limit IP    : </code><code>$iplimit</code>
+<code>Login IP    : </code><code>$cekcek</code>
+<code>◇━━━━━━━━━━━━━━━━━━◇</code>
+<code>Automatic Unlock Account After 15 Minutes!</code>
+<code>◇━━━━━━━━━━━━━━━━━━◇</code>
+"
+    curl -s --max-time $TIME -d "chat_id=$CHATID&disable_web_page_preview=1&text=$TEXT&parse_mode=html" $URL >/dev/null
+}
+
+function send_log_trojan(){
+    CHATID=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 3)
+    KEY=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 2)
+    TIME="10"
+    URL="https://api.telegram.org/bot$KEY/sendMessage"
+    TEXT="
+<code>◇━━━━━━━━━━━━━━━━━━◇</code>
+<b>⚠️ NOTIF MULTI LOGIN XRAY TROJAN ⚠️</b>
+<code>◇━━━━━━━━━━━━━━━━━━◇</code>
+<code>Username  : </code><code>$user</code>
+<code>Limit IP    : </code><code>$iplimit</code>
+<code>Login IP    : </code><code>$cekcek</code>
+<code>◇━━━━━━━━━━━━━━━━━━◇</code>
+<code>Automatic Unlock Account After 15 Minutes!</code>
+<code>◇━━━━━━━━━━━━━━━━━━◇</code>
+"
+    curl -s --max-time $TIME -d "chat_id=$CHATID&disable_web_page_preview=1&text=$TEXT&parse_mode=html" $URL >/dev/null
+}
+
+function unlock_vmess() {
+    cat > /tmp/unlock_vmess_${user}.sh << EOF
+#!/bin/bash
+sed -i '/#vmess\$/a\### '"$user $exp"'\
+},{"id": "'""$uuid""'","alterId": '"0"',"email": "'""$user""'"' /etc/xray/config.json
+sed -i '/#vmessgrpc\$/a\### '"$user $exp"'\
+},{"id": "'""$uuid""'","alterId": '"0"',"email": "'""$user""'"' /etc/xray/config.json
+sed -i "/^### $user $exp $uuid/d" /etc/xray/.lock.db
+systemctl restart xray > /dev/null 2>&1
+rm -rf /tmp/unlock_vmess_${user}.sh
+EOF
+    chmod +x /tmp/unlock_vmess_${user}.sh
+    echo "/tmp/unlock_vmess_${user}.sh" | at now + 15 minutes
+}
+
+function unlock_vless() {
+    cat > /tmp/unlock_vless_${user}.sh << EOF
+#!/bin/bash
+sed -i '/#vless\$/a\#& '"$user $exp"'\
+},{"id": "'""$uuid""'","email": "'""$user""'"' /etc/xray/config.json
+sed -i '/#vlessgrpc\$/a\#& '"$user $exp"'\
+},{"id": "'""$uuid""'","email": "'""$user""'"' /etc/xray/config.json
+sed -i "/^#& $user $exp $uuid/d" /etc/xray/.lock.db
+systemctl restart xray > /dev/null 2>&1
+rm -rf /tmp/unlock_vless_${user}.sh
+EOF
+    chmod +x /tmp/unlock_vless_${user}.sh
+    echo "/tmp/unlock_vless_${user}.sh" | at now + 15 minutes
+}
+
+function unlock_trojan() {
+    cat > /tmp/unlock_trojan_${user}.sh << EOF
+#!/bin/bash
+sed -i '/#trojanws\$/a\#! '"$user $exp"'\
+},{"password": "'""$uuid""'","email": "'""$user""'"' /etc/xray/config.json
+sed -i '/#trojangrpc\$/a\#! '"$user $exp"'\
+},{"password": "'""$uuid""'","email": "'""$user""'"' /etc/xray/config.json
+sed -i "/^#! $user $exp $uuid/d" /etc/xray/.lock.db
+systemctl restart xray > /dev/null 2>&1
+rm -rf /tmp/unlock_trojan_${user}.sh
+EOF
+    chmod +x /tmp/unlock_trojan_${user}.sh
+    echo "/tmp/unlock_trojan_${user}.sh" | at now + 15 minutes
+}
+
+function cek_lock() {
+    cekcek=$(cat /etc/xray/.lock.db)
+    if [[ $cekcek == "" ]]; then
+        cat >/etc/xray/.lock.db <<EOF
+EOF
+    else
+        echo -ne
+    fi
+}
+
+function vmip(){
+    while true; do
+    sleep 15
+        cek_lock
+        data=( `ls /etc/rs/limit/vmess/ip`);
+        for user in "${data[@]}"
+        do
+            iplimit=$(cat /etc/rs/limit/vmess/ip/$user)
+            asu=$(cat /var/log/xray/access.log | grep -wE "$user" | cut -d " " -f 3 | sed 's/tcp://g' | cut -d ":" -f 1 | sort | uniq);
+            cekcek=$(echo -e "$asu" | wc -l);
+            
+            if [[ $cekcek -gt $iplimit ]]; then
+                uuid=$(grep -E "^},{" "/etc/xray/config.json" |  grep -i '"'"${user}"'"' | cut -d " " -f 2 | cut -d '"' -f 2 | uniq )
+                exp=$(grep -w "^### $user" "/etc/xray/config.json" | cut -d ' ' -f 3 | sort | uniq)
+                sed -i '/#vmess$/a\### '"$user $exp $uuid"'' /etc/xray/.lock.db
+                sed -i "/^### $user $exp/,/^},{/d" /etc/xray/config.json
+                echo -n > /var/log/xray/access.log
+                systemctl restart xray >> /dev/null 2>&1
+                send_log_vmess
+                unlock_vmess
+            else
+                echo -ne
+            fi
+            sleep 0.1
+        done
+    done
+}
+
+function vlip(){
+    while true; do
+    sleep 15
+        cek_lock
+        data=( `ls /etc/rs/limit/vless/ip`);
+        for user in "${data[@]}"
+        do
+            iplimit=$(cat /etc/rs/limit/vless/ip/$user)
+            asu=$(cat /var/log/xray/access.log | grep "$user" | cut -d " " -f 3 | sed 's/tcp://g' | cut -d ":" -f 1 | sort | uniq);
+            cekcek=$(echo -e "$asu" | wc -l);
+            
+            if [[ $cekcek -gt $iplimit ]]; then
+                uuid=$(grep -E "^},{" "/etc/xray/config.json" |  grep -i '"'"${user}"'"' | cut -d " " -f 2 | cut -d '"' -f 2 | uniq )
+                exp=$(grep -w "^#& $user" "/etc/xray/config.json" | cut -d ' ' -f 3 | sort | uniq)
+                sed -i '/#vless$/a\#& '"$user $exp $uuid"'' /etc/xray/.lock.db
+                sed -i "/^#& $user $exp/,/^},{/d" /etc/xray/config.json
+                echo -n > /var/log/xray/access.log
+                systemctl restart xray >> /dev/null 2>&1
+                send_log_vless
+                unlock_vless
+            else
+                echo -ne
+            fi
+            sleep 0.1
+        done
+    done
+}
+
+function trip(){
+    while true; do
+    sleep 15
+        cek_lock
+        data=( `ls /etc/rs/limit/trojan/ip`);
+        for user in "${data[@]}"
+        do
+            iplimit=$(cat /etc/rs/limit/trojan/ip/$user)
+            asu=$(cat /var/log/xray/access.log | grep "$user" | cut -d " " -f 3 | sed 's/tcp://g' | cut -d ":" -f 1 | sort | uniq);
+            cekcek=$(echo -e "$asu" | wc -l);
+            
+            if [[ $cekcek -gt $iplimit ]]; then
+                uuid=$(grep -E "^},{" "/etc/xray/config.json" |  grep -i '"'"${user}"'"' | cut -d " " -f 2 | cut -d '"' -f 2 | uniq )
+                exp=$(grep -w "^#! $user" "/etc/xray/config.json" | cut -d ' ' -f 3 | sort | uniq)
+                sed -i '/#trojan$/a\#! '"$user $exp $uuid"'' /etc/xray/.lock.db
+                sed -i "/^#! $user $exp/,/^},{/d" /etc/xray/config.json
+                echo -n > /var/log/xray/access.log
+                systemctl restart xray >> /dev/null 2>&1
+                send_log_trojan
+                unlock_trojan
+            else
+                echo -ne
+            fi
+            sleep 0.1
+        done
+    done
+}
+
+if [[ ${1} == "vmip" ]]; then
+    vmip
+elif [[ ${1} == "vlip" ]]; then
+    vlip
+elif [[ ${1} == "trip" ]]; then
+    trip
+fi
