@@ -1,0 +1,99 @@
+#!/bin/bash
+
+rm -rf /root/pointing >/dev/null 2>&1
+
+clear
+MYIP=$(curl -sS ipv4.icanhazip.com)
+data_server=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Date | sed -e 's/< Date: //')
+
+date_list=$(date +"%Y-%m-%d" -d "$data_server")
+data_ip="https://raw.githubusercontent.com/MarocBeta/Permission/main/access"
+
+clear
+checking_sc() {
+useexp=$(wget -qO- $data_ip | grep $MYIP | awk '{print $3}')
+if [[ $date_list < $useexp ]]; then
+echo -ne
+else
+echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+echo -e "\033[42m          404 NOT FOUND AUTOSCRIPT          \033[0m"
+echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+echo -e ""
+echo -e "            \033[91;1mPERMISSION DENIED !\033[0m"
+echo -e "   \033[0;33mYour VPS\033[0m $MYIP \033[0;33mHas been Banned\033[0m"
+echo -e "     \033[0;33mBuy access permissions for scripts\033[0m"
+echo -e "             \033[0;33mContact Admin :\033[0m"
+echo -e "      \033[2;32mWhatsApp:\033[0m wa.me/6285225416745"
+echo -e "      \033[2;32mTelegram:\033[0m t.me/RidwanzSaputra"
+echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+exit 0
+fi
+}
+
+checking_sc
+
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+NC='\e[0m'
+
+DOMAIN="rscoders.tech"
+CF_ID="ridwanzsptra@gmail.com"
+CF_KEY="aef414496ab441335e845b1960ad3c22e2c0e"
+
+get_ip() {
+  wget -qO- icanhazip.com
+}
+
+create_subdomain() {
+  local prefix="srv"
+  local suffix=$(tr -dc 'a-z0-9' </dev/urandom | head -c4)
+  echo "${prefix}${suffix}.${DOMAIN}"
+}
+
+get_zone_id() {
+  curl -sLX GET "https://api.cloudflare.com/client/v4/zones?name=${DOMAIN}&status=active" \
+    -H "X-Auth-Email: ${CF_ID}" \
+    -H "X-Auth-Key: ${CF_KEY}" \
+    -H "Content-Type: application/json" | jq -r .result[0].id
+}
+
+get_or_create_dns_record() {
+  local dns=$1
+  local zone=$2
+  local ip=$3
+  local record_id
+
+  record_id=$(curl -sLX GET "https://api.cloudflare.com/client/v4/zones/${zone}/dns_records?name=${dns}" \
+    -H "X-Auth-Email: ${CF_ID}" \
+    -H "X-Auth-Key: ${CF_KEY}" \
+    -H "Content-Type: application/json" | jq -r .result[0].id)
+
+  if [[ "${#record_id}" -le 10 ]]; then
+    record_id=$(curl -sLX POST "https://api.cloudflare.com/client/v4/zones/${zone}/dns_records" \
+      -H "X-Auth-Email: ${CF_ID}" \
+      -H "X-Auth-Key: ${CF_KEY}" \
+      -H "Content-Type: application/json" \
+      --data '{"type":"A","name":"'${dns}'","content":"'${ip}'","proxied":false}' | jq -r .result.id)
+  fi
+
+  curl -sLX PUT "https://api.cloudflare.com/client/v4/zones/${zone}/dns_records/${record_id}" \
+    -H "X-Auth-Email: ${CF_ID}" \
+    -H "X-Auth-Key: ${CF_KEY}" \
+    -H "Content-Type: application/json" \
+    --data '{"type":"A","name":"'${dns}'","content":"'${ip}'","proxied":false}' >/dev/null 2>&1
+}
+
+main() {
+  set -euo pipefail
+  local dns=$(create_subdomain)
+  local ip=$(get_ip)
+  echo -e "${YELLOW}Pointing Subdomain For:${NC} $dns..."
+  local zone=$(get_zone_id)
+  get_or_create_dns_record "$dns" "$zone" "$ip"
+  echo "$dns" > /root/domain
+  echo "$dns" > /etc/xray/domain
+  echo -e "${GREEN}Subdomain: ${NC}$dns${GREEN} Pointing Successfully!${NC}"
+}
+
+main
+sleep 3
