@@ -23,8 +23,8 @@ echo -e "            \033[91;1mPERMISSION DENIED !\033[0m"
 echo -e "   \033[0;33mYour VPS\033[0m $MYIP \033[0;33mHas been Banned\033[0m"
 echo -e "     \033[0;33mBuy access permissions for scripts\033[0m"
 echo -e "             \033[0;33mContact Admin :\033[0m"
-echo -e "      \033[2;32mWhatsApp:\033[0m wa.me/6285225416745"
-echo -e "      \033[2;32mTelegram:\033[0m t.me/RidwanzSaputra"
+echo -e "      \033[2;32mWhatsApp:\033[0m wa.me/212608607325"
+echo -e "      \033[2;32mTelegram:\033[0m t.me/MarocBeta"
 echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
 exit 0
 fi
@@ -37,7 +37,8 @@ YELLOW='\033[0;33m'
 NC='\e[0m'
 
 DOMAIN="gorillaszone.co.uk"
-CF_KEY="cfk_TNkJENhdPQKKuWnBVzmt20N4uEzI9ehi0gywfM2r5f83a7be"
+CF_ID="hamzafarkhani@gmail.com"
+CF_KEY="cfk_saKzPsJROWiHiJksTvV8o34qYQXMPBLz0FRwZmS65fd85f30"
 
 get_ip() {
   wget -qO- icanhazip.com
@@ -51,7 +52,8 @@ create_subdomain() {
 
 get_zone_id() {
   curl -sLX GET "https://api.cloudflare.com/client/v4/zones?name=${DOMAIN}&status=active" \
-    -H "Authorization: Bearer ${CF_KEY}" \
+    -H "X-Auth-Email: ${CF_ID}" \
+    -H "X-Auth-Key: ${CF_KEY}" \
     -H "Content-Type: application/json" | jq -r .result[0].id
 }
 
@@ -62,18 +64,21 @@ get_or_create_dns_record() {
   local record_id
 
   record_id=$(curl -sLX GET "https://api.cloudflare.com/client/v4/zones/${zone}/dns_records?name=${dns}" \
-    -H "Authorization: Bearer ${CF_KEY}" \
+    -H "X-Auth-Email: ${CF_ID}" \
+    -H "X-Auth-Key: ${CF_KEY}" \
     -H "Content-Type: application/json" | jq -r .result[0].id)
 
   if [[ "${#record_id}" -le 10 ]]; then
     record_id=$(curl -sLX POST "https://api.cloudflare.com/client/v4/zones/${zone}/dns_records" \
-      -H "Authorization: Bearer ${CF_KEY}" \
+      -H "X-Auth-Email: ${CF_ID}" \
+      -H "X-Auth-Key: ${CF_KEY}" \
       -H "Content-Type: application/json" \
       --data '{"type":"A","name":"'${dns}'","content":"'${ip}'","proxied":false}' | jq -r .result.id)
   fi
 
   curl -sLX PUT "https://api.cloudflare.com/client/v4/zones/${zone}/dns_records/${record_id}" \
-    -H "Authorization: Bearer ${CF_KEY}" \
+    -H "X-Auth-Email: ${CF_ID}" \
+    -H "X-Auth-Key: ${CF_KEY}" \
     -H "Content-Type: application/json" \
     --data '{"type":"A","name":"'${dns}'","content":"'${ip}'","proxied":false}' >/dev/null 2>&1
 }
