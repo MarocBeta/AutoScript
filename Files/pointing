@@ -37,8 +37,8 @@ YELLOW='\033[0;33m'
 NC='\e[0m'
 
 DOMAIN="rscoders.tech"
-CF_ID="ridwanzsptra@gmail.com"
-CF_KEY="aef414496ab441335e845b1960ad3c22e2c0e"
+CF_ID="hamzafarkahni@gmail.com"
+CF_KEY="TNkJENhdPQKKuWnBVzmt20N4uEzI9ehi0gywfM2r5f83a7be"
 
 get_ip() {
   wget -qO- icanhazip.com
