@@ -148,7 +148,7 @@ cat /etc/openvpn/server/ca.crt >> /etc/openvpn/client-ssl.ovpn
 echo '</ca>' >> /etc/openvpn/client-ssl.ovpn
 cp /etc/openvpn/client-ssl.ovpn /var/www/html/client-ssl.ovpn
 cd /var/www/html/
-zip RidwanzOVPN.zip client-tcp.ovpn client-udp.ovpn client-ssl.ovpn
+zip MarocBetaOVPN.zip client-tcp.ovpn client-udp.ovpn client-ssl.ovpn
 
 cat <<'mySiteOvpn' > /var/www/html/index.html
 <!DOCTYPE html>
@@ -158,7 +158,7 @@ cat <<'mySiteOvpn' > /var/www/html/index.html
 <li class="list-group-item justify-content-between align-items-center" style="margin-bottom:1em;"><p>TCP <span class="badge light-blue darken-4">Android/iOS/PC/Modem</span><br /><small></small></p><a class="btn btn-outline-success waves-effect btn-sm" href="https://IP-ADDRESSS:81/client-tcp.ovpn" style="float:right;"><i class="fa fa-download"></i> Download</a></li>
 <li class="list-group-item justify-content-between align-items-center" style="margin-bottom:1em;"><p>UDP <span class="badge light-blue darken-4">Android/iOS/PC/Modem</span><br /><small></small></p><a class="btn btn-outline-success waves-effect btn-sm" href="https://IP-ADDRESSS:81/client-udp.ovpn" style="float:right;"><i class="fa fa-download"></i> Download</a></li>
 <li class="list-group-item justify-content-between align-items-center" style="margin-bottom:1em;"><p>SSL <span class="badge light-blue darken-4">Android/iOS/PC/Modem</span><br /><small></small></p><a class="btn btn-outline-success waves-effect btn-sm" href="https://IP-ADDRESSS:81/client-ssl.ovpn" style="float:right;"><i class="fa fa-download"></i> Download</a></li>
-<li class="list-group-item justify-content-between align-items-center" style="margin-bottom:1em;"><p> ALL.zip <span class="badge light-blue darken-4">Android/iOS/PC/Modem</span><br /><small></small></p><a class="btn btn-outline-success waves-effect btn-sm" href="https://IP-ADDRESSS:81/RidwanzOVPN.zip" style="float:right;"><i class="fa fa-download"></i> Download</a></li>
+<li class="list-group-item justify-content-between align-items-center" style="margin-bottom:1em;"><p> ALL.zip <span class="badge light-blue darken-4">Android/iOS/PC/Modem</span><br /><small></small></p><a class="btn btn-outline-success waves-effect btn-sm" href="https://IP-ADDRESSS:81/MarocBetaOVPN.zip" style="float:right;"><i class="fa fa-download"></i> Download</a></li>
 </ul></div></div></div></div></body></html>
 mySiteOvpn
 sed -i "s|IP-ADDRESSS|$(curl -sS ifconfig.me)|g" /var/www/html/index.html
