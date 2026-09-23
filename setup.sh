@@ -24,7 +24,7 @@ echo -e "   \033[0;33mYour VPS\033[0m $MYIP \033[0;33mHas been Banned\033[0m"
 echo -e "     \033[0;33mBuy access permissions for scripts\033[0m"
 echo -e "             \033[0;33mContact Admin :\033[0m"
 echo -e "      \033[2;32mWhatsApp:\033[0m wa.me/212608607325"
-echo -e "      \033[2;32mTelegram:\033[0m t.me/jolydns"
+echo -e "      \033[2;32mTelegram:\033[0m t.me/MarocBeta"
 echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
 exit 0
 fi
@@ -373,7 +373,7 @@ echo ""
 read -p "Enter Your Subdomains: " host1
 echo $host1 > /etc/xray/domain
 echo $host1 > /root/domain
-echo "Ridwanz Tunneling" > /etc/xray/username
+echo "MAROC BETA AUTOSCRIPT" > /etc/xray/username
 
 elif [[ $host == "2" ]]; then
 
@@ -384,7 +384,7 @@ echo -e "\e[1;36m_______________________________$NC"
 echo -e "\e[1;32m RANDOM SUBDOMAIN USED!$NC"
 echo -e "\e[1;36m_______________________________$NC"
 echo ""
-echo "Ridwanz Tunneling" > /etc/xray/username
+echo "MAROC BETA AUTOSCRIPT" > /etc/xray/username
 
 wget -q ${REPO1}Files/pointing && chmod +x pointing && ./pointing
 
@@ -434,7 +434,7 @@ TEXT="
 <code>CITY : $CITY</code>
 <code>ISP : $ISP</code>
 <code>•─────────────────•</code>
-<b> Bot By: @RidwanzSaputra</b>
+<b> Bot By: @MarocBeta</b>
 <code>•─────────────────•</code>
 <i>Automatic Notifications From Github.</i>"
 
