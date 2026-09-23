@@ -1,6 +1,6 @@
 [Unit]
 Description=UDPGW 7300
-Documentation=https://github.com/RidwanzAnphelibelll
+Documentation=https://github.com/MarocBeta
 After=syslog.target network-online.target
 
 [Service]
