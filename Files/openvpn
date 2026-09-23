@@ -24,7 +24,7 @@ echo -e "   \033[0;33mYour VPS\033[0m $MYIP \033[0;33mHas been Banned\033[0m"
 echo -e "     \033[0;33mBuy access permissions for scripts\033[0m"
 echo -e "             \033[0;33mContact Admin :\033[0m"
 echo -e "      \033[2;32mWhatsApp:\033[0m wa.me/212608607325"
-echo -e "      \033[2;32mTelegram:\033[0m t.me/jolydns"
+echo -e "      \033[2;32mTelegram:\033[0m t.me/MarocBeta"
 echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
 exit 0
 fi
