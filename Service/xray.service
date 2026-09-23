@@ -1,6 +1,6 @@
 [Unit]
 Description=Xray Core
-Documentation=https://github.com/RidwanzAnphelibelll
+Documentation=https://github.com/MarocBeta
 After=network.target nss-lookup.target
 
 [Service]
