@@ -38,7 +38,7 @@ NC='\e[0m'
 
 DOMAIN="gorillaszone.co.uk"
 CF_ID="hamzafarkahni@gmail.com"
-CF_KEY="TNkJENhdPQKKuWnBVzmt20N4uEzI9ehi0gywfM2r5f83a7be"
+CF_KEY="cfk_TNkJENhdPQKKuWnBVzmt20N4uEzI9ehi0gywfM2r5f83a7be"
 
 get_ip() {
   wget -qO- icanhazip.com
