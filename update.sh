@@ -67,7 +67,7 @@ fun_bar() {
 
 res1() {
 wget https://raw.githubusercontent.com/MarocBeta/AutoScript/main/Menu/menu.zip
-7z x -p@karmafc45 menu.zip > /dev/null 2>&1
+7z x -p@Pexoke21free menu.zip > /dev/null 2>&1
 chmod +x menu/*
 mv menu/* /usr/local/sbin
 rm -r menu
