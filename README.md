@@ -10,3 +10,11 @@ apt update -y && apt upgrade -y && apt install -y screen && wget -q https://raw.
 ```
 wget -q https://raw.githubusercontent.com/MarocBeta/AutoScript/main/update.sh && chmod +x update.sh && ./update.sh
 ```
+
+## BotPanel.
+
+### Install :
+
+```
+wget -q https://raw.githubusercontent.com/MarocBeta/BotPanel/main/install.sh && chmod +x install.sh && ./install.sh
+```
