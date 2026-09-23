@@ -7,7 +7,7 @@ MYIP=$(curl -sS ipv4.icanhazip.com)
 data_server=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Date | sed -e 's/< Date: //')
 
 date_list=$(date +"%Y-%m-%d" -d "$data_server")
-data_ip="https://raw.githubusercontent.com/farkhanihamza/Permission/main/access"
+data_ip="https://raw.githubusercontent.com/MarocBeta/Permission/main/access"
 
 clear
 checking_sc() {
