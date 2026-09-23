@@ -373,7 +373,7 @@ echo ""
 read -p "Enter Your Subdomains: " host1
 echo $host1 > /etc/xray/domain
 echo $host1 > /root/domain
-echo "MAROC BETA AUTOSCRIPT" > /etc/xray/username
+echo "Maroc Beta" > /etc/xray/username
 
 elif [[ $host == "2" ]]; then
 
@@ -384,7 +384,7 @@ echo -e "\e[1;36m_______________________________$NC"
 echo -e "\e[1;32m RANDOM SUBDOMAIN USED!$NC"
 echo -e "\e[1;36m_______________________________$NC"
 echo ""
-echo "MAROC BETA AUTOSCRIPT" > /etc/xray/username
+echo "Maroc Beta" > /etc/xray/username
 
 wget -q ${REPO1}Files/pointing && chmod +x pointing && ./pointing
 
@@ -411,8 +411,8 @@ d1=$(date -d "$DATE" +%s)
 d2=$(date -d "$(date)" +%s)
 EXPIRED=$(( ((d1 - d2) + 86399) / 86400 ))
 
-CHATID="5692196612"
-KEY="7534596469:AAG8Myur5wC6hCctbGraT0BnpmUtXozYdIY"
+CHATID="8840137335"
+KEY="8447554823:AAFk9hIU236PI7UqDAxUsfLl0WbnCEzJ6MI"
 TIME="10"
 URL="https://api.telegram.org/bot$KEY/sendMessage"
 TEXT="
@@ -812,7 +812,7 @@ function menu_packages() {
 clear
 print_install "Installing The Packages Menu"
 wget -q ${REPO1}Menu/menu.zip
-7z x -p@karmafc45 menu.zip > /dev/null 2>&1
+7z x -p@Pexoke21free menu.zip > /dev/null 2>&1
 chmod +x menu/*
 mv menu/* /usr/local/sbin >/dev/null 2>&1
 rm -r menu
