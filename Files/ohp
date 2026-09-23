@@ -39,7 +39,7 @@ sudo chmod +x /usr/bin/ohp
 cat > /etc/systemd/system/ssh-ohp.service << END
 [Unit]
 Description=SSH OHP Services.
-Documentation=https://github.com/RidwanzAnphelibelll
+Documentation=https://github.com/MarocBeta
 After=network.target nss-lookup.target
 
 [Service]
@@ -59,7 +59,7 @@ END
 cat > /etc/systemd/system/dropbear-ohp.service << END
 [Unit]
 Description=Dropbear OHP Services.
-Documentation=https://github.com/RidwanzAnphelibelll
+Documentation=https://github.com/MarocBeta
 After=network.target nss-lookup.target
 
 [Service]
@@ -79,7 +79,7 @@ END
 cat > /etc/systemd/system/openvpn-ohp.service << END
 [Unit]
 Description=OpenVPN OHP Services.
-Documentation=https://github.com/RidwanzAnphelibelll
+Documentation=https://github.com/MarocBeta
 After=network.target nss-lookup.target
 
 [Service]
