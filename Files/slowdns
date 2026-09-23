@@ -23,8 +23,8 @@ echo -e "            \033[91;1mPERMISSION DENIED !\033[0m"
 echo -e "   \033[0;33mYour VPS\033[0m $MYIP \033[0;33mHas been Banned\033[0m"
 echo -e "     \033[0;33mBuy access permissions for scripts\033[0m"
 echo -e "             \033[0;33mContact Admin :\033[0m"
-echo -e "      \033[2;32mWhatsApp:\033[0m wa.me/212608607325"
-echo -e "      \033[2;32mTelegram:\033[0m t.me/MarocBeta"
+echo -e "      \033[2;32mWhatsApp:\033[0m wa.me/6285225416745"
+echo -e "      \033[2;32mTelegram:\033[0m t.me/RidwanzSaputra"
 echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
 exit 0
 fi
@@ -41,32 +41,28 @@ ns_domain_cloudflare() {
     DOMAIN="rsvpns.my.id"
     DOMAIN_PATH=$(cat /etc/xray/domain)
     SUB=$(tr </dev/urandom -dc a-z0-9 | head -c7)
-    SUB_DOMAIN="${SUB}.rsvpns.my.id"
+    SUB_DOMAIN="${SUB}.gorillaszone.co.uk"
     NS_DOMAIN="dns.${SUB_DOMAIN}"
-    CF_ID="ridwanzsptra@gmail.com"
-    CF_KEY="aef414496ab441335e845b1960ad3c22e2c0e"
+    CF_KEY="cfk_TNkJENhdPQKKuWnBVzmt20N4uEzI9ehi0gywfM2r5f83a7be"
     IP=$(wget -qO- ipinfo.io/ip)
     
     echo -e "${YELLOW}Updating DNS NS For:${NC} ${NS_DOMAIN}..."
     ZONE=$(
         curl -sLX GET "https://api.cloudflare.com/client/v4/zones?name=${DOMAIN}&status=active" \
-        -H "X-Auth-Email: ${CF_ID}" \
-        -H "X-Auth-Key: ${CF_KEY}" \
+        -H "Authorization: Bearer ${CF_KEY}" \
         -H "Content-Type: application/json" | jq -r .result[0].id
     )
 
     RECORD=$(
         curl -sLX GET "https://api.cloudflare.com/client/v4/zones/${ZONE}/dns_records?name=${NS_DOMAIN}" \
-        -H "X-Auth-Email: ${CF_ID}" \
-        -H "X-Auth-Key: ${CF_KEY}" \
+        -H "Authorization: Bearer ${CF_KEY}" \
         -H "Content-Type: application/json" | jq -r .result[0].id
     )
 
     if [ "${#RECORD}" -le 10 ]; then
         RECORD=$(
             curl -sLX POST "https://api.cloudflare.com/client/v4/zones/${ZONE}/dns_records" \
-            -H "X-Auth-Email: ${CF_ID}" \
-            -H "X-Auth-Key: ${CF_KEY}" \
+            -H "Authorization: Bearer ${CF_KEY}" \
             -H "Content-Type: application/json" \
             --data '{"type":"NS","name":"'${NS_DOMAIN}'","content":"'${DOMAIN_PATH}'","proxied":false}' | jq -r .result.id
         )
@@ -74,8 +70,7 @@ ns_domain_cloudflare() {
 
     RESULT=$(
         curl -sLX PUT "https://api.cloudflare.com/client/v4/zones/${ZONE}/dns_records/${RECORD}" \
-        -H "X-Auth-Email: ${CF_ID}" \
-        -H "X-Auth-Key: ${CF_KEY}" \
+        -H "Authorization: Bearer ${CF_KEY}" \
         -H "Content-Type: application/json" \
         --data '{"type":"NS","name":"'${NS_DOMAIN}'","content":"'${DOMAIN_PATH}'","proxied":false}'
     )
