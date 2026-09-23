@@ -36,7 +36,7 @@ GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
 NC='\e[0m'
 
-DOMAIN="rscoders.tech"
+DOMAIN="gorrilaszone.co.uk"
 CF_ID="hamzafarkahni@gmail.com"
 CF_KEY="TNkJENhdPQKKuWnBVzmt20N4uEzI9ehi0gywfM2r5f83a7be"
 
