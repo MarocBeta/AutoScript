@@ -29,3 +29,169 @@ wget -q https://raw.githubusercontent.com/MarocBeta/AutoScript/main/update.sh &&
 ```
 wget -q https://raw.githubusercontent.com/MarocBeta/BotPanel/main/install.sh && chmod +x install.sh && ./install.sh
 ```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Service & Port</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 30px;
+    background: #111526;
+    color: #12a58d;
+    font-family: "Courier New", monospace;
+    font-weight: bold;
+}
+
+.container {
+    max-width: 1100px;
+    margin: auto;
+}
+
+.title {
+    font-size: 32px;
+    margin-bottom: 12px;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 28px;
+    line-height: 1.7;
+}
+
+.service::before {
+    content: "- ";
+}
+
+.port {
+    min-width: 280px;
+}
+
+@media (max-width: 700px) {
+    body {
+        padding: 15px;
+    }
+
+    .title {
+        font-size: 20px;
+    }
+
+    .row {
+        font-size: 15px;
+        line-height: 2;
+    }
+
+    .port {
+        min-width: 135px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="title">
+        &gt;&gt;&gt; Service &amp; Port
+    </div>
+
+    <div class="row">
+        <span class="service">Open SSH</span>
+        <span class="port">: 443, 80, 22</span>
+    </div>
+
+    <div class="row">
+        <span class="service">Dropbear</span>
+        <span class="port">: 109, 143</span>
+    </div>
+
+    <div class="row">
+        <span class="service">SSH Websocket SSL</span>
+        <span class="port">: 443</span>
+    </div>
+
+    <div class="row">
+        <span class="service">SSH Websocket HTTP</span>
+        <span class="port">: 80</span>
+    </div>
+
+    <div class="row">
+        <span class="service">SSH UDP Custom</span>
+        <span class="port">: 1-65535</span>
+    </div>
+
+    <div class="row">
+        <span class="service">OpenVPN TCP</span>
+        <span class="port">: 1194</span>
+    </div>
+
+    <div class="row">
+        <span class="service">OpenVPN UDP</span>
+        <span class="port">: 2200</span>
+    </div>
+
+    <div class="row">
+        <span class="service">OpenVPN SSL</span>
+        <span class="port">: 990</span>
+    </div>
+
+    <div class="row">
+        <span class="service">XRAY Vmess TLS</span>
+        <span class="port">: 443</span>
+    </div>
+
+    <div class="row">
+        <span class="service">XRAY Vmess gRPC</span>
+        <span class="port">: 443</span>
+    </div>
+
+    <div class="row">
+        <span class="service">XRAY Vmess None TLS</span>
+        <span class="port">: 80</span>
+    </div>
+
+    <div class="row">
+        <span class="service">XRAY Vless TLS</span>
+        <span class="port">: 443</span>
+    </div>
+
+    <div class="row">
+        <span class="service">XRAY Vless gRPC</span>
+        <span class="port">: 443</span>
+    </div>
+
+    <div class="row">
+        <span class="service">XRAY Vless None TLS</span>
+        <span class="port">: 80</span>
+    </div>
+
+    <div class="row">
+        <span class="service">Trojan gRPC</span>
+        <span class="port">: 443</span>
+    </div>
+
+    <div class="row">
+        <span class="service">Trojan WS</span>
+        <span class="port">: 443, 80</span>
+    </div>
+
+    <div class="row">
+        <span class="service">BadVPN UDPGW</span>
+        <span class="port">: 7100, 7200, 7300</span>
+    </div>
+
+</div>
+
+</body>
+</html>
